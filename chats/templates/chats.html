@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Rooms</title>
+		<link rel="stylesheet" href="{% static 'chats/css/style.css' %}" />
+</head>
+<body>
+    <h1>Welcome, {{ request.user.username }}</h1>
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Logout</button>
+    </form>
+
+    <div class="container">
+        <div class="user-list">
+            <h2>Users</h2>
+							<div class="scrollable-section users-scroll">
+							{% for user in users %}
+									<div class="user" onclick="startChat('{{ user.username }}')">
+											{{ user.username }}
+									</div>
+							{% endfor %}
+						</div>
+            
+            <h2>Your Chats</h2>
+						<div class="scrollable-section chats-scroll">
+            {% for room in rooms %}
+                <div class="room {% if room.name == room_name %}active-room{% endif %}" 
+                     onclick="joinRoom('{{ room.name }}')">
+                    {% if room.user1 == request.user %}
+                        Chat with {{ room.user2.username }}
+                    {% else %}
+                        Chat with {{ room.user1.username }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+					</div>
+        </div>
+        <div class="chat-container" id="chat-container" data-room-name="{{ current_room }}" data-username="{{ request.user.username }}">
+            {% if current_room %}
+                <p>{{ current_room }}</p>
+                <h2>
+                    {% if current_room.user1 == request.user %}
+                        Chat with {{ current_room.user2.username }}
+                    {% else %}
+                        Chat with {{ current_room.user1.username }}
+                    {% endif %}
+                </h2>
+                
+                <div id="messages">
+                    {% for message in messages %}
+                        <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                            <strong>{{ message.sender.username }}:</strong>
+                            {% if message.content %}
+                                <p>{{ message.content }}</p>
+                            {% endif %}
+                            {% if message.file %}
+                                {% if message.file.url|lower|slice:'-4:' == '.jpg' or message.file.url|lower|slice:'-5:' == '.jpeg' or message.file.url|lower|slice:'-4:' == '.png' or message.file.url|lower|slice:'-4:' == '.gif' %}
+                                    <img src="{{ message.file.url }}" alt="Sent image">
+                                {% else %}
+                                    <a href="{{ message.file.url }}" class="message-file" download>Download file: {{ message.file.name|slice:"6:" }}</a>
+                                {% endif %}
+                            {% endif %}
+                            <small>{{ message.timestamp }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div>
+                    <input type="text" id="message-input" placeholder="Type your message...">
+                    <button id="send-button">Send</button>
+                    <button id="file-button">Upload File</button>
+                    <input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx,.txt">
+                </div>
+            {% else %}
+                <p>Select a user to start chatting</p>
+            {% endif %}
+        </div>
+    </div>
+
+		<!-- DONOT CHANGE ORDER -->
+    <script src="{% static 'chats/js/scripts.js' %}"></script>
+    <script src="{% static 'chats/js/websocket.js' %}"></script>
+    <script src="{% static 'chats/js/file_upload.js' %}"></script>
+</body>
+</html>

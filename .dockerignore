@@ -1,0 +1,31 @@
+# Python cache and bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django migrations
+chats/migrations/
+chats_api/migrations/
+users/migrations/
+
+# Local SQLite database
+db.sqlite3
+
+# Media and uploaded files
+media/
+media/chat_files/
+
+# Static files collected locally 
+staticfiles/
+
+# Docker files and configs
+docker-compose.yml
+Dockerfile
+
+# Git files
+.git
+.gitignore
+
+
+uv.lock
