@@ -1,6 +1,8 @@
 ## Assumptions Made:
     Signed In user can see all other registerd users
     Signed In user can start conversation with all other users
+    User should only be allowed to send messages through a web interface
+    while receiving and retrieving messages should be allowed through the REST API.
 
 
 ## CreateSuperUser:
